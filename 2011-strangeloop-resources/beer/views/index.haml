@@ -1,0 +1,38 @@
+#welcome
+  Hello
+  =current_user.name
+  \:
+  %a{:href=>'/logout'} Logout
+
+#body
+  #beer-list
+    %h2 Your Beers
+    - if @beers.nil? || @beers.empty?
+      %strong You haven't rated any beers yet. Do that now!
+    - else
+      %ul
+        - @beers.each do |beer|
+          %li
+            =beer.name
+            =beer.rating
+            
+
+  #beer-form
+    %form{:method=>'POST', :action=>'/beer'}
+      %p
+        %label{:for=>'name'} Name
+        %input{:type=>'text', :name=>'name'} 
+        %label{:for=>'rating'} Rating
+        %select{:name=>'rating'} 
+          %option{:value=>1} 1
+          %option{:value=>2} 2
+          %option{:value=>3, :selected=>:selected} 3
+          %option{:value=>4} 4
+          %option{:value=>5} 5
+      %p
+        %label{:for=>'notes'} Notes
+        %br
+        %textarea{:name=>'notes', :rows=>8, :cols=>40} 
+
+      %p
+        %input{:type=>'submit'}

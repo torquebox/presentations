@@ -1,0 +1,17 @@
+!!!
+%html{:lang=>'en'}
+  %head
+    %link{:rel=>'stylesheet', :type=>'text/css', :href=>'/styles.css'}
+    %title Beer Catalogue
+
+  %body
+    #container
+      #header
+        %h1 Beer Catalog
+      #content
+        =yield
+        %div{:style=>'clear:both'}
+      #footer
+        Brought to you by 
+        %a{:href=>'http://projectodd.org'} project:odd
+
