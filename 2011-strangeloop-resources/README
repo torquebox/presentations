@@ -1,13 +1,14 @@
-Notes and sample code from the StrangeLoop 2011 presentation.
+Notes and sample code from the StrangeLoop 2011 presentation.  To run the beer app, follow the steps below.
 
+$ cd beer
 
- $ cat .rvmrc
+$ cat .rvmrc
 rvm use jruby-1.6.4@beer --create
 
- $ . .rvmrc 
+$ . .rvmrc 
 Using /Users/lanceball/.rvm/gems/jruby-1.6.4 with gemset beer
 
- $ gem install torquebox-server --pre --source http://torquebox.org/2x/builds/LATEST/gem-repo/
+$ gem install torquebox-server --pre --source http://torquebox.org/2x/builds/LATEST/gem-repo/
 Fetching: torquebox-core-2.x.incremental.427-java.gem (100%)
 Fetching: torquebox-transactions-2.x.incremental.427.gem (100%)
 Fetching: blankslate-2.1.2.4.gem (100%)
@@ -27,23 +28,16 @@ Error: Your application used more memory than the safety cap of 500m.
 Specify -J-Xmx####m to increase it (#### = cap size in MB).
 Specify -w for full OutOfMemoryError stack trace
 
->> lanceball @ Neptune (jruby-1.6.4@beer) ~/dm-ispan-preso [master*] <<  
- $ jurby -S -J-Xmx1024m gem install torquebox-server --pre --source http://torquebox.org/2x/builds/LATEST/gem-repo/
--bash: jurby: command not found
-
->> lanceball @ Neptune (jruby-1.6.4@beer) ~/dm-ispan-preso [master*] <<  
- $ jruby -S -J-Xmx1024m gem install torquebox-server --pre --source http://torquebox.org/2x/builds/LATEST/gem-repo/
+$ jruby -S -J-Xmx1024m gem install torquebox-server --pre --source http://torquebox.org/2x/builds/LATEST/gem-repo/
 Successfully installed torquebox-server-2.x.incremental.427-java
 1 gem installed
 
->> lanceball @ Neptune (jruby-1.6.4@beer) ~/dm-ispan-preso [master*] <<  
- $ gem install bundler
+$ gem install bundler
 Fetching: bundler-1.0.18.gem (100%)
 Successfully installed bundler-1.0.18
 1 gem installed
 
->> lanceball @ Neptune (jruby-1.6.4@beer) ~/dm-ispan-preso [master*] <<  
- $ bundle install
+$ bundle install
 Fetching source index for http://torquebox.org/2x/builds/LATEST/gem-repo/
 Fetching source index for http://rubygems.org/
 Using rake (0.9.2) 
@@ -67,7 +61,7 @@ Using torquebox-core (2.x.incremental.427)
 Using torquebox-cache (2.x.incremental.427) 
 Your bundle is complete! Use `bundle show [gemname]` to see where a bundled gem is installed.
 
- $ torquebox
+$ torquebox
 Tasks:
   torquebox deploy ROOT     # Deploy an application to TorqueBox
   torquebox undeploy ROOT   # Undeploy an application from TorqueBox
@@ -77,16 +71,14 @@ Tasks:
   torquebox help [TASK]     # Describe available tasks or one specific task
 
 
->> lanceball @ Neptune (jruby-1.6.4@beer) ~/dm-ispan-preso [master*] <<  
- $ torquebox deploy .
-Deployed: dm-ispan-preso-knob.yml
+$ torquebox deploy .
+Deployed: beer-knob.yml
     into: /Users/lanceball/.rvm/gems/jruby-1.6.4@beer/gems/torquebox-server-2.x.incremental.427-java/jboss/standalone/deployments
 
->> lanceball @ Neptune (jruby-1.6.4@beer) ~/dm-ispan-preso [master*] <<  
- $ cat /Users/lanceball/.rvm/gems/jruby-1.6.4\@beer/gems/torquebox-server-2.x.incremental.427-java/jboss/standalone/deployments/dm-ispan-preso-knob.yml
+$ cat /Users/lanceball/.rvm/gems/jruby-1.6.4\@beer/gems/torquebox-server-2.x.incremental.427-java/jboss/standalone/deployments/beer-knob.yml
 --- 
 application: 
-  root: /Users/lanceball/dm-ispan-preso
+  root: /Users/lanceball/dm-ispan-preso/beer
 environment: {}
 
 
