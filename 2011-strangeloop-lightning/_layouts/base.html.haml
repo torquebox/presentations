@@ -1,0 +1,46 @@
+!!! 5
+%html.no-js{:lang=>'en'}
+  %head
+    %title
+      TorqueBox Lightning Talk - Strange Loop 2011 Conference
+    %link{ :rel=>'stylesheet', :type=>'text/css', :href=>'/javascripts/core/deck.core.css'}
+    %link{ :rel=>'stylesheet', :type=>'text/css', :href=>'/javascripts/extensions/goto/deck.goto.css'}
+    %link{ :rel=>'stylesheet', :type=>'text/css', :href=>'/javascripts/extensions/menu/deck.menu.css'}
+    %link{ :rel=>'stylesheet', :type=>'text/css', :href=>'/javascripts/extensions/navigation/deck.navigation.css'}
+    %link{ :rel=>'stylesheet', :type=>'text/css', :href=>'/javascripts/extensions/hash/deck.hash.css'}
+    %link{ :rel=>'stylesheet', :type=>'text/css', :href=>'/javascripts/extensions/status/deck.status.css'}
+
+    %link#style-theme-link{ :rel=>'stylesheet', :type=>'text/css', :href=>'/stylesheets/themes/style/swiss.css'}
+    %link#transition-theme-link{ :rel=>'stylesheet', :type=>'text/css', :href=>'/stylesheets/themes/transition/horizontal-slide.css'}
+    %link{ :rel=>'stylesheet', :type=>'text/css', :href=>'/javascripts/highlight/styles/github.css' }
+
+    %script{ :src=>'/javascripts/modernizr.custom.js' }
+
+  %body.deck-container
+    ~content
+    %script{ :src=>'/javascripts/jquery.min.js' }
+    %script{ :src=>'/javascripts/core/deck.core.js' }
+    %script{ :src=>'/javascripts/extensions/menu/deck.menu.js' }
+    %script{ :src=>'/javascripts/extensions/goto/deck.goto.js' }
+    %script{ :src=>'/javascripts/extensions/status/deck.status.js' }
+    %script{ :src=>'/javascripts/extensions/navigation/deck.navigation.js' }
+    %script{ :src=>'/javascripts/extensions/hash/deck.hash.js' }
+    %script{ :src=>'/javascripts/highlight/highlight.pack.js' }
+
+    %a{:href=>"#", :class=>"deck-prev-link", :title=>"Previous"} &#8592; 
+    %a{:href=>"#", :class=>"deck-next-link", :title=>"Next"} &#8594;
+
+    %p.deck-status
+      %span{:style=>'display:block'} Strange Loop 2011, St. Louis
+      %span{:class=>"deck-status-current"}
+      \/
+      %span{:class=>"deck-status-total"}
+
+
+    :javascript
+      $(function() {
+        // Deck initialization
+        $.deck('.slide');
+      });
+            
+      hljs.initHighlightingOnLoad();

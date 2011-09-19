@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html class='no-js' lang='en'>
+  <head>
+    <title>
+      TorqueBox Lightning Talk - Strange Loop 2011 Conference
+    </title>
+    <link href='/javascripts/core/deck.core.css' rel='stylesheet' type='text/css' />
+    <link href='/javascripts/extensions/goto/deck.goto.css' rel='stylesheet' type='text/css' />
+    <link href='/javascripts/extensions/menu/deck.menu.css' rel='stylesheet' type='text/css' />
+    <link href='/javascripts/extensions/navigation/deck.navigation.css' rel='stylesheet' type='text/css' />
+    <link href='/javascripts/extensions/hash/deck.hash.css' rel='stylesheet' type='text/css' />
+    <link href='/javascripts/extensions/status/deck.status.css' rel='stylesheet' type='text/css' />
+    <link href='/stylesheets/themes/style/swiss.css' id='style-theme-link' rel='stylesheet' type='text/css' />
+    <link href='/stylesheets/themes/transition/horizontal-slide.css' id='transition-theme-link' rel='stylesheet' type='text/css' />
+    <link href='/javascripts/highlight/styles/github.css' rel='stylesheet' type='text/css' />
+    <script src='/javascripts/modernizr.custom.js'></script>
+  </head>
+  <body class='deck-container'>
+    <div class='slide' id='intro'>
+      <div class='logo' style='margin:20px'>
+        <img src='images/knob.png' />
+      </div>
+      <h1 style='margin:20px'>TorqueBox</h1>
+      <h2>Strange Loop 2011 Lightning Talk</h2>
+    </div>
+    <div class='slide' id='shoulders-of-giants'>
+      <h2>A Ruby Application Server</h2>
+      <h3 class='slide'>Built on the shoulders of giants</h3>
+      <h3 class='slide'>JBoss AS7</h3>
+      <h3 class='slide'>JRuby 1.6.4</h3>
+      <h3 class='slide'>The power of JBoss</h3>
+      <h3 class='slide'>The expressiveness of Ruby</h3>
+    </div>
+    <div class='slide' id='services'>
+      <h2>Out of the Box</h2>
+      <h3 class='slide'>Rack apps - Rails, Sinatra, etc</h3>
+      <h3 class='slide'>Web Sockets - STOMP</h3>
+      <h3 class='slide'>Daemons / Long-running services</h3>
+      <h3 class='slide'>Scheduled jobs</h3>
+      <h3 class='slide'>Background tasks (a la Delayed::Job or Resque)</h3>
+      <h3 class='slide'>JMS message queues</h3>
+      <h3 class='slide'>Clustering</h3>
+      <h3 class='slide'>Distributed / replicated cache</h3>
+      <h3 class='slide'>Resource injection</h3>
+      <h3 class='slide'>JTA transactions</h3>
+      <h3 class='slide'>JAAS authentication</h3>
+    </div>
+    <div class='slide' id='messaging'>
+      <h2>An Example</h2>
+      <h3>We have time for only one!</h3>
+      <pre><code>class User&#x000A;  def send_welcome_email&#x000A;    # compose, format and send email&#x000A;    # this takes a while. Don't make&#x000A;    # the caller wait.&#x000A;  end&#x000A;end</code></pre>
+      <pre class='slide'><code>user = User.new&#x000A;user.send_welcome_email</code></pre>
+      <h3>This could take a while</h3>
+    </div>
+    <div class='slide' id='backgroundable'>
+      <h2>Backgroundable</h2>
+      <pre><code>class User&#x000A;&#x000A;  <span style="font-weight:bold">include TorqueBox::Messaging::Backgroundable</style>&#x000A;&#x000A;  def send_welcome_email&#x000A;    # compose, format and send email&#x000A;    # this takes a while. Don't make&#x000A;    # the caller wait.&#x000A;  end&#x000A;end</code></pre>
+      <pre class='slide'><code>user = User.new&#x000A;user.<span style='font-weight:bold'>background</span>.send_welcome_email</code></pre>
+      <h3>Better</h3>
+    </div>
+    <div class='slide' id='always-background'>
+      <h2>Always Backgrounded</h2>
+      <pre><code>class User&#x000A;  include TorqueBox::Messaging::Backgroundable&#x000A;&#x000A;  <span style='font-weight:bold'>always_background :send_welcome_email&#x000A;&#x000A;  def send_welcome_email&#x000A;    # compose, format and send email&#x000A;    # this takes a while. Don't make&#x000A;    # the caller wait.&#x000A;  end&#x000A;end</code></pre>
+      <pre class='slide'><code>user = User.new&#x000A;user.send_welcome_email</code></pre>
+      <h3>Best!</h3>
+    </div>
+    <div class='slide' id='performance'>
+      <h2>Performance</h2>
+      <img src='/images/compare_top.png' />
+      <h3>TorqueBox 1.0 Metrics</h3>
+    </div>
+    <div class='slide' id='resources'>
+      <h2>Resources</h2>
+      <h3>http://torquebox.org</h3>
+      <h3>http://github.com/torquebox</h3>
+      <h3>#torquebox on Freenode</h3>
+      <h3>@torquebox</h3>
+    </div>
+    <div class='slide' id='questions'>
+      <h1>Questions?</h1>
+      <h2>Thanks</h2>
+    </div>
+    <script src='/javascripts/jquery.min.js'></script>
+    <script src='/javascripts/core/deck.core.js'></script>
+    <script src='/javascripts/extensions/menu/deck.menu.js'></script>
+    <script src='/javascripts/extensions/goto/deck.goto.js'></script>
+    <script src='/javascripts/extensions/status/deck.status.js'></script>
+    <script src='/javascripts/extensions/navigation/deck.navigation.js'></script>
+    <script src='/javascripts/extensions/hash/deck.hash.js'></script>
+    <script src='/javascripts/highlight/highlight.pack.js'></script>
+    <a class='deck-prev-link' href='#' title='Previous'>&#8592;</a>
+    <a class='deck-next-link' href='#' title='Next'>&#8594;</a>
+    <p class='deck-status'>
+      <span style='display:block'>Strange Loop 2011, St. Louis</span>
+      <span class='deck-status-current'></span>
+      /
+      <span class='deck-status-total'></span>
+    </p>
+    <script type='text/javascript'>
+      //<![CDATA[
+        $(function() {
+          // Deck initialization
+          $.deck('.slide');
+        });
+              
+        hljs.initHighlightingOnLoad();
+      //]]>
+    </script>
+  </body>
+</html>

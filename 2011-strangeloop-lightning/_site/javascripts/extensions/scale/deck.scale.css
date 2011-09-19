@@ -1,0 +1,18 @@
+/* line 1 */
+.csstransforms .deck-container.deck-scale {
+  width: auto;
+  -webkit-transform-origin: 50% 0;
+  -moz-transform-origin: 50% 0;
+  -o-transform-origin: 50% 0;
+  -ms-transform-origin: 50% 0;
+  transform-origin: 50% 0;
+}
+/* line 9 */
+.csstransforms .deck-container.deck-scale.deck-menu {
+  width: 70%;
+  -webkit-transform: none !important;
+  -moz-transform: none !important;
+  -o-transform: none !important;
+  -ms-transform: none !important;
+  transform: none !important;
+}

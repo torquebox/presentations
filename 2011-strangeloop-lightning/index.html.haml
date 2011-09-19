@@ -1,0 +1,113 @@
+---
+layout: base
+---
+
+#intro.slide
+  .logo{:style=>'margin:20px'}
+    %img{:src=>'images/knob.png'}
+  %h1{:style=>'margin:20px'} TorqueBox
+  %h2 Strange Loop 2011 Lightning Talk
+
+#shoulders-of-giants.slide
+  %h2 A Ruby Application Server
+  %h3.slide Built on the shoulders of giants
+  %h3.slide JBoss AS7
+  %h3.slide JRuby 1.6.4
+  %h3.slide The power of JBoss
+  %h3.slide The expressiveness of Ruby
+
+#services.slide
+  %h2 Out of the Box
+  %h3.slide Rack apps - Rails, Sinatra, etc
+  %h3.slide Web Sockets - STOMP
+  %h3.slide Daemons / Long-running services
+  %h3.slide Scheduled jobs
+  %h3.slide Background tasks (a la Delayed::Job or Resque)
+  %h3.slide JMS message queues
+  %h3.slide Clustering
+  %h3.slide Distributed / replicated cache
+  %h3.slide Resource injection
+  %h3.slide JTA transactions
+  %h3.slide JAAS authentication
+
+
+#messaging.slide
+  %h2 An Example
+  %h3 We have time for only one!
+  %pre
+    %code
+      :preserve
+        class User
+          def send_welcome_email
+            # compose, format and send email
+            # this takes a while. Don't make
+            # the caller wait.
+          end
+        end
+  %pre.slide
+    %code
+      :preserve
+        user = User.new
+        user.send_welcome_email
+  %h3 This could take a while
+
+#backgroundable.slide
+  %h2 Backgroundable
+  %pre
+    %code
+      :preserve
+        class User
+
+          <span style="font-weight:bold">include TorqueBox::Messaging::Backgroundable</style>
+
+          def send_welcome_email
+            # compose, format and send email
+            # this takes a while. Don't make
+            # the caller wait.
+          end
+        end
+  %pre.slide
+    %code
+      :preserve
+        user = User.new
+        user.<span style='font-weight:bold'>background</span>.send_welcome_email
+  %h3 Better
+
+#always-background.slide
+  %h2 Always Backgrounded
+  %pre
+    %code
+      :preserve
+        class User
+          include TorqueBox::Messaging::Backgroundable
+
+          <span style='font-weight:bold'>always_background :send_welcome_email
+
+          def send_welcome_email
+            # compose, format and send email
+            # this takes a while. Don't make
+            # the caller wait.
+          end
+        end
+  %pre.slide
+    %code
+      :preserve
+        user = User.new
+        user.send_welcome_email
+  %h3 Best!
+
+#performance.slide
+  %h2 Performance
+  %img{:src=>'/images/compare_top.png'}
+  %h3 TorqueBox 1.0 Metrics
+
+#resources.slide
+  %h2 Resources
+  %h3 http://torquebox.org
+  %h3 http://github.com/torquebox
+  %h3 #torquebox on Freenode
+  %h3 @torquebox
+
+#questions.slide
+  %h1 Questions?
+  %h2 Thanks
