@@ -1,0 +1,3 @@
+= JBug Newcastle: Ruby on Rails on TorqueBox
+
+Welcome to Newcast JBug!  Choose a section from the left column to get started.

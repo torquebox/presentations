@@ -1,0 +1,32 @@
+= Installation
+
+It's reccommended you run this practical on a linux or mac.  Windows machines ca
+n be a bit flakely due to some of the system libraries that are required.
+
+=== Prerequisites
+
+These are needed for jruby and for some of the ruby libaries we'll use in this practical.  The packages below are tested on fedora you might need to find the equivilent depending on your distro.
+
+  yum install -y gcc-c++ patch readline readline-devel zlib zlib-devel libyaml-devel libffi-devel openssl-devel make bzip2 autoconf automake libtool bison java sqlite3-devel
+
+=== RVM
+
+Install ruby version manager.  Follow the instructions on the link below:
+
+  https://rvm.io/rvm/install/
+
+=== JRuby
+
+  rvm install jruby
+
+=== TorqueBox
+
+  rvm use jruby
+  rvm gemset create torquebox
+  rvm use jruby-1.6.7.2@torquebox
+
+  jruby -J-Xmx1024m -S gem install torquebox-server
+
+=== Install rails
+
+  gem install rails

@@ -1,0 +1,34 @@
+= Running TorqueBox
+
+TorqueBox creates a command line tool for managing your torquebox server.  You can checkout the avaiable commands through:
+
+  torquebox
+
+You can also checkout which versions of JBOSS, JRUBY and TORQUEBOX you are using.
+
+  torquebox env
+
+=== Starting TorqueBox
+
+Instructions for deploying a rails application on torquebox.  To be used after you've created your rails app.
+
+Make sure that JBOSS_HOME and $TORQUEBOX_HOME point to the torquebox gem.
+
+  export TORQUEBOX_HOME= ~/.rvm/gems/jruby-1.6.7@jbug/gems/torquebox-server-2.0.3-java/
+  export JBOSS_HOME=$TORQUEBOX_HOME/jboss
+
+
+Start the torquebox server
+
+  torquebox run
+
+Now visit: http://localhost:9990 to make sure its deployed.
+
+=== Deploying an applicaiton
+
+Once you've created a rails applicaiton you can deploying it by issueing the following command.
+
+  torquebox deploy #From your applications root directory
+
+You should be able to see your rails app here: http://localhost:8080
+

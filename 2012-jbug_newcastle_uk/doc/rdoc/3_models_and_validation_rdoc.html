@@ -1,0 +1,437 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+<meta content="text/html; charset=UTF-8" http-equiv="Content-Type">
+
+<title>3.models_and_validation - RDoc Documentation</title>
+
+<link type="text/css" media="screen" href="../rdoc.css" rel="stylesheet">
+
+<script type="text/javascript">
+  var rdoc_rel_prefix = "../";
+</script>
+
+<script type="text/javascript" charset="utf-8" src="../js/jquery.js"></script>
+<script type="text/javascript" charset="utf-8" src="../js/navigation.js"></script>
+<script type="text/javascript" charset="utf-8" src="../js/search_index.js"></script>
+<script type="text/javascript" charset="utf-8" src="../js/search.js"></script>
+<script type="text/javascript" charset="utf-8" src="../js/searcher.js"></script>
+<script type="text/javascript" charset="utf-8" src="../js/darkfish.js"></script>
+
+
+<body class="file">
+<nav id="metadata">
+  <nav id="home-section" class="section">
+  <h3 class="section-header">
+    <a href="../index.html">Home</a>
+    <a href="../table_of_contents.html#classes">Classes</a>
+    <a href="../table_of_contents.html#methods">Methods</a>
+  </h3>
+</nav>
+
+
+  <nav id="search-section" class="section project-section" class="initially-hidden">
+  <form action="#" method="get" accept-charset="utf-8">
+    <h3 class="section-header">
+      <input type="text" name="search" placeholder="Search" id="search-field"
+             title="Type to search, Up and Down to navigate, Enter to load">
+    </h3>
+  </form>
+
+  <ul id="search-results" class="initially-hidden"></ul>
+</nav>
+
+
+  <div id="project-metadata">
+    <nav id="fileindex-section" class="section project-section">
+  <h3 class="section-header">Pages</h3>
+
+  <ul>
+  
+    <li class="file"><a href="../rdoc/0_index_rdoc.html">0.index</a>
+  
+    <li class="file"><a href="../rdoc/1_installation_rdoc.html">1.installation</a>
+  
+    <li class="file"><a href="../rdoc/2_running_torquebox_rdoc.html">2.running_torquebox</a>
+  
+    <li class="file"><a href="../rdoc/3_models_and_validation_rdoc.html">3.models_and_validation</a>
+  
+    <li class="file"><a href="../rdoc/4_controller_view_rdoc.html">4.controller_view</a>
+  
+    <li class="file"><a href="../rdoc/5_torquebox_messaging_rdoc.html">5.torquebox_messaging</a>
+  
+  </ul>
+</nav>
+
+    <nav id="classindex-section" class="section project-section">
+  <h3 class="section-header">Class and Module Index</h3>
+
+  <ul class="link-list">
+  
+  </ul>
+</nav>
+
+  </div>
+</nav>
+
+<div id="documentation" class="description">
+  
+<h1 id="label-Face+Blog+-+Models+and+Validation">Face Blog - Models and Validation</h1>
+
+<p>Now that you have everything installed, you’re ready to rock n roll. 
+It’s time to create your first rails application.  You’re going to
+create a new social networking site called Face Blog.</p>
+
+<h2 id="label-Creating+a+Rails+App">Creating a Rails App</h2>
+
+<pre>cd src/1 # From the jbug root directory.  We'll work from here.</pre>
+
+<p>First thing you need to do is create a new rails application.  Well
+that’s pretty easy.</p>
+
+<pre>rails new face_blog</pre>
+
+<p>Notice the file structure.  Every rails app looks the same.  This makes it
+easy to quickly get involved in other rails projects, since you’ll
+already know your way around.</p>
+
+<p>The main areas you’ll be working in today are:</p>
+
+<pre>app/       # This contains all your MVC files
+config/    # Used to configure your app
+db/        # Where migrations and schema lives</pre>
+
+<h2 id="label-Adding+gems">Adding gems</h2>
+
+<p>First thing we’re going to add to our site is a User.  We want to allow
+the user to login, signup and all that jazz.  But of course we’re not
+going to write all that ourselves.  We’ll use a library to do the grunt
+work for us.</p>
+
+<p>We’re going to add “devise” (an authentication gem for rails) to our
+application, as well as a few extra libraries that we’ll need later.</p>
+
+<p>All the libraries your rails application depends on are specified in your
+applicatons Gemfile (found in your applicaitons root directory).  Let’s
+add in ‘devise’ and a few of other libs such as a javascript runtime,
+openssl and jdbc adapter for sqlite3.</p>
+
+<p>Open up your applications Gemfile and add the following under where is
+says: gem “rails”, “3.2.x”</p>
+
+<pre>gem 'devise'
+gem 'execjs'
+gem 'therubyrhino'
+gem 'jruby-openssl'
+gem 'activerecord-jdbcsqlite3-adapter'</pre>
+
+<p>Notice the convention here.</p>
+
+<p>The gem followed by  name on the left followed by the version.</p>
+
+<pre>gem 'rails', '3.2.6'</pre>
+
+<p>This specifies we want to include version 3.2.6 of rails.  Each gemfile has
+a source:</p>
+
+<pre>source 'http://rubygems.org'</pre>
+
+<p>This tells the bundler (the component responsible for retreiving the gems)
+where they are located.</p>
+
+<p>Another interesting thing in our Gemfile is the group block.  We can
+include gems specifically for different groups for example:</p>
+
+<pre>group: test do 
+  gem 'rspec'
+end</pre>
+
+<p>This will include the rspec gem (a testing library) only in our test
+environment.</p>
+
+<p>Run bundler to pull the dependecies into our gemset.  Make sure you’re in
+your application’s root directory and run:</p>
+
+<pre>bundle install</pre>
+
+<p>Note: A gemset is a feature of rvm.  It allows us to create groups of gems
+(a level above those specified in our Gemfile) that are contained from
+other gems to prevent things like version conflicts.  It’s reccommended
+that you use one getset per application environment.</p>
+
+<p>So Back to devise;  We need to do a little setup.  From you’re terminal
+run the following (from you’re application’s root directory)</p>
+
+<pre>rails generate devise:install
+rails generate devise:views</pre>
+
+<p>Note: devise:install and devise:views are rails generators.  Generators are
+scripts that add some setup to your application.  Rails comes as default
+with a number of generators that you can use for creating things like
+controllers, models and migrations.  We’ll use these later.</p>
+
+<h2 id="label-Testing+our+app">Testing our app</h2>
+
+<p>Before we continue, let’s make sure we have the correct dependencies and
+that we can deploy our rails app on TorqueBox.  Start TorqueBox and deploy
+your applicaton.  If all goes well you should be able to see the rails
+landing page.  For information on how to start TorqueBox and to deploy your
+app check out section 2. Running TorqueBox.  Be sure to return here when
+your done.</p>
+
+<h2 id="label-Rails+Console">Rails Console</h2>
+
+<p>For the next section we won’t be needing to test things in TorqueBox,
+we’ll use the rails console.  The rails console is a ruby irb (Itegrated
+Ruby Shell) with your full rails application enviornment loaded.  It’s
+ideal for testing models, validation and just for trying things out.  To
+start the rails console type:</p>
+
+<pre>rails c # from you applicaton root directory</pre>
+
+<p>You can now issue ruby commands.  Just try:</p>
+
+<pre>1 + 1</pre>
+
+<p>If you make changes to your model, database, controllers etc… You’ll
+need to reload the enviroment.  To do that issue the reload! command:</p>
+
+<pre>reload!</pre>
+
+<p>To close the rails console type:</p>
+
+<pre>quit</pre>
+
+<h2 id="label-Models+and+Migrations">Models and Migrations</h2>
+
+<p>So we started off by saying we were going to add a user.  Let’s get to
+the chase.</p>
+
+<p>To create our user model and migration we’ll use a model generator.  This
+will create our model a migration file to update the database and a few
+other things used for testing.  If your curious you can check to see what
+generators are available in your app:</p>
+
+<pre>rails generate</pre>
+
+<p>To create our user model we’ll use the devise model generator, here
+we’ve specified that we want to create a model call User and that we want
+it to have 2 attributes, name and dob.</p>
+
+<pre>rails generate devise User name:string dob:date</pre>
+
+<p>We’ve not come across migrations yet.</p>
+
+<p>Migrations are scripts that update your database from one state to another.
+If you take a look at the migration we just created (under db/migrate)
+you’ll see that the migration specifies that we want to create a new
+table and add some table fields.  (The extra fields; email, password etc…
+are added by devise and are will be used later for authentication))</p>
+
+<p>We might create another migration later that adds extra fields to the table
+or deletes the table.  The key thing to remember is that a migration will
+evolve the database it is not a big bang approach.</p>
+
+<p>Notice that the migration is timestamped this is how Rails knows the order
+to run them in.</p>
+
+<p>Next, take a look at db/schema.rb.  Each time a migration is run, the
+schema is updated to represent the current database state.  The timestamp
+up where the schema is defined represents the last migration that was run. 
+If you add in extra migrations, rails will know to start from the timestamp
+given in the schema.</p>
+
+<p>So, now that we’ve added some migrations we’ll create the applications
+databases and run our migration.</p>
+
+<pre>rake db:create:all # Creates databases
+rake db:migrate    # Migrates the current rails env database: development</pre>
+
+<p>Next we’ll make the our dob and name attributes pubic (This is so we can
+mass-assign them later in our controller).  We do this by setting the
+attr_accessible method.</p>
+
+<p>Open up the model app/models/user.rb and add in :name and :dob to the
+attr_accessible method:</p>
+
+<pre>attr_accessible :email, :password, :password_confirmation, :remember_me, :name, :dob</pre>
+
+<h2 id="label-Validations">Validations</h2>
+
+<p>You can now test out your model in the rails console.</p>
+
+<pre>rails c</pre>
+
+<p>Lets create a new user from the rails console.</p>
+
+<pre class="ruby"><span class="ruby-identifier">me</span> = <span class="ruby-constant">User</span>.<span class="ruby-identifier">new</span>(:<span class="ruby-identifier">name</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-string">&quot;Martyn&quot;</span>, :<span class="ruby-identifier">dob</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-string">&quot;11/22/1984&quot;</span>)
+</pre>
+
+<p>What happens when you try to save me to the database.</p>
+
+<pre>me.save!</pre>
+
+<p>You should have received a validation exception and probably a stack trace.</p>
+
+<p>This happens because devise has already added some extra validation to our
+model.  We must enter a unique email and password and password_confirmation
+(which must match) Let’s try again.</p>
+
+<pre class="ruby"><span class="ruby-identifier">me</span> = <span class="ruby-constant">User</span>.<span class="ruby-identifier">new</span>(:<span class="ruby-identifier">name</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-string">&quot;Martyn&quot;</span>, :<span class="ruby-identifier">dob</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-string">&quot;11/22/1984&quot;</span>, :<span class="ruby-identifier">email</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-string">&quot;mtaylor@redhat.com&quot;</span>, :<span class="ruby-identifier">password</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-string">&quot;password&quot;</span>, :<span class="ruby-identifier">password_confirmation</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-string">&quot;password&quot;</span>)
+<span class="ruby-identifier">me</span>.<span class="ruby-identifier">save!</span>
+</pre>
+
+<p>Voila it works.  Congratulations you’ve just created your first rails
+model and saved an object to the database. :D</p>
+
+<h4 id="label-NOTE%3A+">NOTE: </h4>
+
+<p>Through out this section your going to create many users.  Devise has a
+uniqueness validation on email address.  So you’ll likely get complaints
+from Devise should you try and create another user with an address that is
+already taken.  You can easily delete users from the rails console (rails
+c):</p>
+
+<pre class="ruby"><span class="ruby-comment"># Delete a single user</span>
+<span class="ruby-identifier">me</span>.<span class="ruby-identifier">destroy</span>
+
+<span class="ruby-comment"># Delete All Users</span>
+<span class="ruby-constant">User</span>.<span class="ruby-identifier">all</span>.<span class="ruby-identifier">each</span> { <span class="ruby-operator">|</span><span class="ruby-identifier">u</span><span class="ruby-operator">|</span> <span class="ruby-identifier">u</span>.<span class="ruby-identifier">destroy</span> }
+</pre>
+
+<p>Now we’ve seen devise validations in action, its time to add our own. 
+Face Blog is for over 18s only and user must supply a name.  Let’s start
+by adding validation to make sure name is not empty.  Open up the user
+model, add in name validation.</p>
+
+<pre class="ruby"><span class="ruby-identifier">validates</span> :<span class="ruby-identifier">name</span>, :<span class="ruby-identifier">presence</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-keyword">true</span>, :<span class="ruby-identifier">length</span> =<span class="ruby-operator">&gt;</span> { :<span class="ruby-identifier">minimum</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-value">2</span> }
+</pre>
+
+<p>This makes sure that a user supplies a name and its length greater than or
+equal to 2</p>
+
+<p>Now time for checking the age.  We could use the rails helper methods for
+checking the age.  But instead we’re going to create a custom method to
+stop underage users signing up.</p>
+
+<pre class="ruby"><span class="ruby-identifier">validates</span> :<span class="ruby-identifier">dob</span>, :<span class="ruby-identifier">presence</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-keyword">true</span>
+<span class="ruby-identifier">validate</span> :<span class="ruby-identifier">must_be_an_adult</span>
+
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">must_be_an_adult</span>
+  <span class="ruby-keyword">if</span> (<span class="ruby-constant">Time</span>.<span class="ruby-identifier">now</span> <span class="ruby-operator">-</span> <span class="ruby-value">18</span>.<span class="ruby-identifier">years</span>) <span class="ruby-operator">&lt;</span> <span class="ruby-identifier">dob</span>
+    <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">add</span>(:<span class="ruby-identifier">age</span>, <span class="ruby-string">&quot;must be over 18&quot;</span>)
+  <span class="ruby-keyword">end</span>
+<span class="ruby-keyword">end</span>
+</pre>
+
+<p>Reload open up a new rails console “rails c” or run reload! (This
+reloads your environement) from your existing IRB session:</p>
+
+<p>Try it out to see if its working.</p>
+
+<pre class="ruby"><span class="ruby-constant">User</span>.<span class="ruby-identifier">create!</span>(:<span class="ruby-identifier">email</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-string">&quot;mtaylor@redhat.com&quot;</span>, :<span class="ruby-identifier">password</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-string">&quot;password&quot;</span>, :<span class="ruby-identifier">password_confirmation</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-string">&quot;password&quot;</span>, :<span class="ruby-identifier">dob</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-string">&quot;01/01/2010&quot;</span>, :<span class="ruby-identifier">name</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-string">&quot;&quot;</span>)
+</pre>
+
+<p>You should receive another validation exception informing us that the name
+cannot be blank and the users age must be over 18.</p>
+
+<h2 id="label-Associations">Associations</h2>
+
+<p>Now that you’ve grasped validations it’s time to move on to
+associations.  Associations in rails are simply relationships between
+models.</p>
+
+<p>Face Blog allows users to add friends.  To do this wel’ll need an extra
+model, we’ll call it friendship.  This will be used to store mappings
+between users.  We’ll setup model assoications to acheive the ERD show
+below:</p>
+
+<p><img src="../images/first_model_erd.png" /></p>
+
+<p>To start we need to create the extra friendship model.  We’ll use a
+generator to do this, run the following from your terminal in your
+application root directory:</p>
+
+<pre>rails generate model Friendship user_id:integer friend_id:string
+rake db:migrate</pre>
+
+<p>Note the naming convention here.  When we setup associations in rails,
+ActiveRecord automatically looks for a foreign key named
+&lt;association_name&gt;_id.  It’s possible to override this, but we’ll
+stick to convention for now to make it easy.</p>
+
+<p>Next we need to add in the association into the models.</p>
+
+<p>In the friendship model we add two associations</p>
+
+<pre class="ruby"><span class="ruby-identifier">belongs_to</span> :<span class="ruby-identifier">user</span>
+<span class="ruby-identifier">belongs_to</span> :<span class="ruby-identifier">friend</span>, :<span class="ruby-identifier">class_name</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-string">&quot;User&quot;</span>
+</pre>
+
+<p>these associations link up the two ids we store to User objects.  For each
+friendship we can now get the User (the owner of the friendship) and the
+Friend (Another User).</p>
+
+<p>Now lets do the same on the User side.</p>
+
+<pre class="ruby"><span class="ruby-identifier">has_many</span> :<span class="ruby-identifier">friendships</span>
+<span class="ruby-identifier">has_many</span> :<span class="ruby-identifier">friends</span>, :<span class="ruby-identifier">through</span> =<span class="ruby-operator">&gt;</span> :<span class="ruby-identifier">friendships</span>
+</pre>
+
+<p>The last association is more of a convenience method.  Really we want to
+deal with friends not with friendships, ActiveRecord will look at the
+friendship Model for an association called :friend which we defined
+previously, and retreive the User with that ID.</p>
+
+<p>Now time to test it all out.  Reload your rails environment again:
+‘reload!’ and create some users and friendships.</p>
+
+<pre class="ruby"><span class="ruby-comment"># Delete all users (To prevent any conflicts)</span>
+<span class="ruby-constant">User</span>.<span class="ruby-identifier">all</span>.<span class="ruby-identifier">each</span> { <span class="ruby-operator">|</span><span class="ruby-identifier">u</span><span class="ruby-operator">|</span> <span class="ruby-identifier">u</span>.<span class="ruby-identifier">destroy</span> }
+
+<span class="ruby-comment"># User 1</span>
+<span class="ruby-identifier">martyn</span> = <span class="ruby-constant">User</span>.<span class="ruby-identifier">create!</span>(:<span class="ruby-identifier">email</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-string">&quot;mtaylor@redhat.com&quot;</span>, :<span class="ruby-identifier">password</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-string">&quot;password&quot;</span>, :<span class="ruby-identifier">password_confirmation</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-string">&quot;password&quot;</span>, :<span class="ruby-identifier">name</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-string">&quot;martyn&quot;</span>, :<span class="ruby-identifier">dob</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-string">&quot;11/22/1984&quot;</span>)
+
+<span class="ruby-comment"># User 2</span>
+<span class="ruby-identifier">dave</span> = <span class="ruby-constant">User</span>.<span class="ruby-identifier">create!</span>(:<span class="ruby-identifier">email</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-string">&quot;dave@redhat.com&quot;</span>, :<span class="ruby-identifier">password</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-string">&quot;password&quot;</span>, :<span class="ruby-identifier">password_confirmation</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-string">&quot;password&quot;</span>, :<span class="ruby-identifier">name</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-string">&quot;Dave&quot;</span>, :<span class="ruby-identifier">dob</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-string">&quot;01/01/1950&quot;</span>)
+
+<span class="ruby-comment"># Add dave as a friend</span>
+<span class="ruby-identifier">martyn</span>.<span class="ruby-identifier">friends</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">dave</span>
+<span class="ruby-identifier">martyn</span>.<span class="ruby-identifier">save!</span>
+
+<span class="ruby-comment"># Check the relation</span>
+<span class="ruby-identifier">martyn</span>.<span class="ruby-identifier">friends</span>
+</pre>
+
+<p>You might have noticed that dave still has no friends.  This is becuase we
+only set up the association in one direction.  We could add the inverse
+assoications to the user model, which would solve this issue.  But for the
+sake of simplicity we’ll simply add an extra friendship entry.</p>
+
+<pre># Add Martyn as Daves friend
+dave.friends &lt;&lt; martyn
+dave.save!</pre>
+
+<h3 id="label-Overview">Overview</h3>
+
+<p>There you have it.  You’ve successfully managed to create new models,
+migrations add validation and setup associations.  All in the space of a
+few minutes.  Next we’ll start building up the Controller and View side
+of our applicaton.  We’re going to need a ruby server running to test
+this.  If you haven’t already, check out the Running TorqueBox section. 
+If your having trouble with TorqueBox don’t worry you can just use the
+default ruby server for testing purposes.  To start it:</p>
+
+<pre>rails s</pre>
+
+</div>
+
+
+
+<footer id="validator-badges">
+  <p><a href="http://validator.w3.org/check/referer">[Validate]</a>
+  <p>Generated by <a href="https://github.com/rdoc/rdoc">RDoc</a> 3.12.
+  <p>Generated with the <a href="http://deveiate.org/projects/Darkfish-Rdoc/">Darkfish Rdoc Generator</a> 3.
+</footer>
+

@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+<meta content="text/html; charset=UTF-8" http-equiv="Content-Type">
+
+<title>5.torquebox_messaging - RDoc Documentation</title>
+
+<link type="text/css" media="screen" href="../rdoc.css" rel="stylesheet">
+
+<script type="text/javascript">
+  var rdoc_rel_prefix = "../";
+</script>
+
+<script type="text/javascript" charset="utf-8" src="../js/jquery.js"></script>
+<script type="text/javascript" charset="utf-8" src="../js/navigation.js"></script>
+<script type="text/javascript" charset="utf-8" src="../js/search_index.js"></script>
+<script type="text/javascript" charset="utf-8" src="../js/search.js"></script>
+<script type="text/javascript" charset="utf-8" src="../js/searcher.js"></script>
+<script type="text/javascript" charset="utf-8" src="../js/darkfish.js"></script>
+
+
+<body class="file">
+<nav id="metadata">
+  <nav id="home-section" class="section">
+  <h3 class="section-header">
+    <a href="../index.html">Home</a>
+    <a href="../table_of_contents.html#classes">Classes</a>
+    <a href="../table_of_contents.html#methods">Methods</a>
+  </h3>
+</nav>
+
+
+  <nav id="search-section" class="section project-section" class="initially-hidden">
+  <form action="#" method="get" accept-charset="utf-8">
+    <h3 class="section-header">
+      <input type="text" name="search" placeholder="Search" id="search-field"
+             title="Type to search, Up and Down to navigate, Enter to load">
+    </h3>
+  </form>
+
+  <ul id="search-results" class="initially-hidden"></ul>
+</nav>
+
+
+  <div id="project-metadata">
+    <nav id="fileindex-section" class="section project-section">
+  <h3 class="section-header">Pages</h3>
+
+  <ul>
+  
+    <li class="file"><a href="../rdoc/0_index_rdoc.html">0.index</a>
+  
+    <li class="file"><a href="../rdoc/1_installation_rdoc.html">1.installation</a>
+  
+    <li class="file"><a href="../rdoc/2_running_torquebox_rdoc.html">2.running_torquebox</a>
+  
+    <li class="file"><a href="../rdoc/3_models_and_validation_rdoc.html">3.models_and_validation</a>
+  
+    <li class="file"><a href="../rdoc/4_controller_view_rdoc.html">4.controller_view</a>
+  
+    <li class="file"><a href="../rdoc/5_torquebox_messaging_rdoc.html">5.torquebox_messaging</a>
+  
+  </ul>
+</nav>
+
+    <nav id="classindex-section" class="section project-section">
+  <h3 class="section-header">Class and Module Index</h3>
+
+  <ul class="link-list">
+  
+  </ul>
+</nav>
+
+  </div>
+</nav>
+
+<div id="documentation" class="description">
+  
+<h1 id="label-TorqueBox+Messaging">TorqueBox Messaging</h1>
+
+<p>Everything we’ve used so far has been strictly rails only.  Now its time
+to take a look at some of the cool features we get from TorqueBox.  We’re
+going to add the ability for users to subscribe and post to a tweets
+channel, that can be viewed by their friends.  We’ll use TorqueBox
+messaging to do all this for us.</p>
+
+<p>TorqueBox messaging is simply a ruby wrapper around JBoss’s super fast,
+high performance Messaging solution, HornetQ.  To find out more about
+HornetQ you can visit: <a
+href="https://www.jboss.org/hornetq">www.jboss.org/hornetq</a>  For more
+information about TorqueBox and TorquBox messaging you can checkout their
+website and documentation here: <a
+href="http://torquebox.org/">torquebox.org/</a></p>
+
+<p>In order for users to subscribe to a tweets channel we’re going to create
+a queue and a message consumer.  Users can post messages to the queue and
+the consumer will pull off messages and associate them with that users
+friends.</p>
+
+<p>Note: We could implement similar behaviour using topics.  For simplicity
+(and because TorqueBox doesn’t yet support subscriptions to topics
+created at runtime) we’ll stick with a queue and a message consumer to
+handle everything.</p>
+
+<p>Undeploy you application</p>
+
+<pre>torquebox undeploy</pre>
+
+<p>and cd into src/app/3/face_blog we’ll continue from here.</p>
+
+<p>The application is updated a little.  We’ve added the in an extra model
+to handle the user -&gt; message association:</p>
+
+<p><img src="../images/model_erd.png" /></p>
+
+<p>and we’ve also added an extra controller and content to our views for
+creating and viewing our messages.  Run the database migrations and deploy
+the application and check out the changes.</p>
+
+<pre>rake db:create:all
+rake db:migrate
+
+torquebox deploy # from src/3/face_blog directory</pre>
+
+<h3 id="label-Adding+Messages+to+Face+Blog">Adding Messages to Face Blog</h3>
+
+<p>We need to add torquebox-messaging to our Gemfile:</p>
+
+<pre>gem 'torquebox-messaging'</pre>
+
+<p>Then run:</p>
+
+<pre>bundle install</pre>
+
+<p>Now we have the relevant libraries, we’ll start and create a message
+processor.  A message processor is basically a ruby message driven bean,
+we’ll use this to get messages from the queue and associate them with
+each user.  Create a new file tweet_processor.rb under the app/processors
+directory (you’ll need to create this) and add in our logic to handle the
+message:</p>
+
+<pre class="ruby"><span class="ruby-keyword">class</span> <span class="ruby-constant">TweetProcessor</span> <span class="ruby-operator">&lt;</span> <span class="ruby-constant">TorqueBox</span><span class="ruby-operator">::</span><span class="ruby-constant">Messaging</span><span class="ruby-operator">::</span><span class="ruby-constant">MessageProcessor</span>
+
+  <span class="ruby-keyword">def</span> <span class="ruby-identifier">on_message</span>(<span class="ruby-identifier">message</span>)
+    <span class="ruby-identifier">user</span> = <span class="ruby-constant">User</span>.<span class="ruby-identifier">find</span>(<span class="ruby-identifier">message</span>[:<span class="ruby-identifier">sender_id</span>])
+    (<span class="ruby-identifier">user</span>.<span class="ruby-identifier">friends</span> <span class="ruby-operator">+</span> [<span class="ruby-identifier">user</span>]).<span class="ruby-identifier">each</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">friend</span><span class="ruby-operator">|</span>
+      <span class="ruby-identifier">friend</span>.<span class="ruby-identifier">messages</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-constant">Message</span>.<span class="ruby-identifier">new</span>(:<span class="ruby-identifier">body</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">message</span>[:<span class="ruby-identifier">body</span>], :<span class="ruby-identifier">sender</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">user</span>)
+      <span class="ruby-identifier">friend</span>.<span class="ruby-identifier">save!</span>
+    <span class="ruby-keyword">end</span>
+  <span class="ruby-keyword">end</span>
+
+  <span class="ruby-keyword">def</span> <span class="ruby-identifier">on_error</span>(<span class="ruby-identifier">exception</span>)
+    <span class="ruby-identifier">raise</span> <span class="ruby-identifier">exception</span>
+  <span class="ruby-keyword">end</span>
+<span class="ruby-keyword">end</span>
+</pre>
+
+<p>Next we’ll create a new queue and associate it with out message
+processor.  This is really simply.  We just need to create a deployment
+descriptor named torquebox.yml in our applications config directory.  We
+add in the queue configuration in there.  Create a new file
+config/torquebox.rb and add in the following:</p>
+
+<pre>queues:
+  /queues/tweet:
+
+messaging:
+  /queues/tweet: TweetProcessor</pre>
+
+<p>Now consumer messages is all set up we just need to create them.  Open up
+the messages controller ‘app/controllers/messages_controller.rb and add
+in the code to send a message in the create action.  You’ll need to add
+it just before the redirect_to.</p>
+
+<pre class="ruby"><span class="ruby-comment"># Lookup the queue</span>
+<span class="ruby-identifier">queue</span> = <span class="ruby-identifier">inject</span> <span class="ruby-string">&quot;/queues/tweet&quot;</span>
+
+<span class="ruby-comment"># Publish message</span>
+<span class="ruby-identifier">queue</span>.<span class="ruby-identifier">publish</span>(:<span class="ruby-identifier">body</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">message</span>.<span class="ruby-identifier">body</span>, :<span class="ruby-identifier">sender_id</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">current_user</span>.<span class="ruby-identifier">id</span>)
+</pre>
+
+<p>Now redeploy your application and give it a whirl.</p>
+
+<pre>torquebox deploy # from src/3/final/face_blog</pre>
+
+<h3 id="label-End...">End…</h3>
+
+<p>Congratulations.  You’ve managed to incorporate HornetQ and created some
+basic messaging in your rails app.  There is much more to torquebox
+messaging, we only just scratched the surface..  To find out more check out
+the documentation here: <a href="http://torquebox.org/">torquebox.org/</a></p>
+
+<p>Well, that’s it for now…  Hopefully this practical has inspired you to
+go away and give rails and torquebox a try.  Thanks for taking part.</p>
+
+</div>
+
+
+
+<footer id="validator-badges">
+  <p><a href="http://validator.w3.org/check/referer">[Validate]</a>
+  <p>Generated by <a href="https://github.com/rdoc/rdoc">RDoc</a> 3.12.
+  <p>Generated with the <a href="http://deveiate.org/projects/Darkfish-Rdoc/">Darkfish Rdoc Generator</a> 3.
+</footer>
+

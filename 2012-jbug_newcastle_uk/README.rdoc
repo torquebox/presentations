@@ -1,0 +1,11 @@
+= 2012 JBUG Hackathon.
+
+An introduction to Ruby on Rails using TorqueBox as the deployment server.  The session starts with some background to Rails and introduces TorqueBox.
+
+The practical session covers installing and running TorqueBox; building a social networking site in Rails and utilizing TorqueBox messaging to create jms queues; implementing 'tweet' style behaviour in the web application.
+
+== Getting Started
+
+Introductory slides are found in /slides
+
+Start the practical session with: doc/rdoc/0_index_rdoc.html 

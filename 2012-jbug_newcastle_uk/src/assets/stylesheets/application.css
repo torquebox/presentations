@@ -1,0 +1,118 @@
+body {
+    margin: auto;
+    width: 800px;
+}
+header {
+    background-image: url("header.png");
+    color: white;
+    font-size: 10px;
+    height: 60px;
+    margin-bottom: 10px;
+    margin-top: 10px;
+    padding: 10px;
+    text-align: right;
+    width: 780px;
+}
+header a {
+    color: white;
+}
+table {
+    border-spacing: 0 5px;
+    width: 100%;
+}
+tr {
+    border: 10px solid black;
+    height: 60px;
+    margin-bottom: 10px;
+}
+td.avatar {
+    background-image: url("avatar.png");
+    background-size: 100% auto;
+    width: 60px;
+}
+tr:nth-child(2n+1) {
+    background-color: #EEEEEE;
+}
+tr:nth-child(2n) {
+    background-color: #FFFFFF;
+}
+td.info {
+    font-size: 30px;
+    text-align: center;
+    width: 600px;
+}
+td.links {
+    color: #000066;
+    text-align: right;
+}
+a {
+    color: #000088;
+}
+#info {
+    text-align: center;
+    width: 150px;
+    float: left;
+}
+#avatar {
+    background-image: url("avatar.png");
+    background-size: 100% auto;
+    height: 150px;
+    margin-bottom: 10px;
+    width: 150px;
+}
+#user_info {
+    font-weight: bold;
+}
+#contact {
+    font-size: 10px;
+}
+#friend {
+    background-color: #EEEEEE;
+    background-image: url("avatar.png");
+    background-repeat: no-repeat;
+    background-size: 30px 30px;
+    height: 30px;
+    margin-bottom: 10px;
+    text-align: right;
+    width: 100%;
+}
+
+#messages {
+  float: right;
+  width: 640px;
+  text-align: right;
+}
+
+input.message { 
+  width: 530px;
+}
+
+input.message_send {
+  width: 100px;
+}
+
+#message_details {
+  margin: 10px;
+  float: left;
+}
+
+tr.message {
+  padding: 50px;
+}
+
+td.message_avatar {
+  width: 50px;
+  background-position:center;
+  background-image: url("avatar.png");
+  background-repeat: no-repeat;
+  background-size: 30px 30px;
+}
+
+td.message_details {
+  text-align: left;
+}
+
+td.message_body {
+  text-align: left;
+  font-style: italic;
+}

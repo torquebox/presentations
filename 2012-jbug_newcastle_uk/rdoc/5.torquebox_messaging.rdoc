@@ -1,0 +1,103 @@
+= TorqueBox Messaging
+
+Everything we've used so far has been strictly rails only.  Now its time to take a look at some of the cool features we get from TorqueBox.  We're going to add the ability for users to subscribe and post to a tweets channel, that can be viewed by their friends.  We'll use TorqueBox messaging to do all this for us.  
+
+TorqueBox messaging is simply a ruby wrapper around JBoss's super fast, high performance Messaging solution, HornetQ.  To find out more about HornetQ you can visit: https://www.jboss.org/hornetq  For more information about TorqueBox and TorquBox messaging you can checkout their website and documentation here: http://torquebox.org/
+
+In order for users to subscribe to a tweets channel we're going to create a queue and a message consumer.  Users can post messages to the queue and the consumer will pull off messages and associate them with that users friends.
+
+Note: We could implement similar behaviour using topics.  For simplicity (and because TorqueBox doesn't yet support subscriptions to topics created at runtime) we'll stick with a queue and a message consumer to handle everything.
+
+Undeploy you application
+
+  torquebox undeploy 
+
+and cd into src/app/3/face_blog we'll continue from here.
+
+The application is updated a little.  We've added the in an extra model to handle the user -> message association:
+
+link:images/model_erd.png
+
+and we've also added an extra controller and content to our views for creating and viewing our messages.  Run the database migrations and deploy the application and check out the changes.
+
+  rake db:create:all
+  rake db:migrate
+
+  torquebox deploy # from src/3/face_blog directory
+
+=== Adding Messages to Face Blog
+
+We need to add torquebox-messaging to our Gemfile:
+
+  gem 'torquebox-messaging'
+
+Then run:
+
+  bundle install
+
+Now we have the relevant libraries, we'll start and create a message processor.  A message processor is basically a ruby message driven bean, we'll use this to get messages from the queue and associate them with each user.  Create a new file tweet_processor.rb under the app/processors directory (you'll need to create this) and add in our logic to handle the message:
+
+
+  class TweetProcessor < TorqueBox::Messaging::MessageProcessor
+
+    def on_message(message)
+      user = User.find(message[:sender_id])
+      (user.friends + [user]).each do |friend|
+        friend.messages << Message.new(:body => message[:body], :sender => user)
+        friend.save!
+      end
+    end
+
+    def on_error(exception)
+      raise exception
+    end
+  end
+
+Next we'll create a new queue and associate it with out message processor.  This is really simply.  We just need to create a deployment descriptor named torquebox.yml in our applications config directory.  We add in the queue configuration in there.  Create a new file config/torquebox.rb and add in the following:
+
+  queues:
+    /queues/tweet:
+
+  messaging:
+    /queues/tweet: TweetProcessor
+
+Now consumer messages is all set up we just need to create them.  Open up the messages controller 'app/controllers/messages_controller.rb and add in the code to send a message in the create action.  You'll need to add it just before the redirect_to.
+
+    # Lookup the queue
+    queue = inject "/queues/tweet"
+
+    # Publish message
+    queue.publish(:body => message.body, :sender_id => current_user.id)
+
+
+Now redeploy your application and give it a whirl.
+
+  torquebox deploy # from src/3/final/face_blog
+
+=== End...
+
+Congratulations.  You've managed to incorporate HornetQ and created some basic messaging in your rails app.  There is much more to torquebox messaging, we only just scratched the surface..  To find out more check out the documentation here: http://torquebox.org/
+
+Well, that's it for now...  Hopefully this practical has inspired you to go away and give rails and torquebox a try.  Thanks for taking part.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
