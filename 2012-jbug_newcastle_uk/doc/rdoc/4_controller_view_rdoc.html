@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+<meta content="text/html; charset=UTF-8" http-equiv="Content-Type">
+
+<title>4.controller_view - RDoc Documentation</title>
+
+<link type="text/css" media="screen" href="../rdoc.css" rel="stylesheet">
+
+<script type="text/javascript">
+  var rdoc_rel_prefix = "../";
+</script>
+
+<script type="text/javascript" charset="utf-8" src="../js/jquery.js"></script>
+<script type="text/javascript" charset="utf-8" src="../js/navigation.js"></script>
+<script type="text/javascript" charset="utf-8" src="../js/search_index.js"></script>
+<script type="text/javascript" charset="utf-8" src="../js/search.js"></script>
+<script type="text/javascript" charset="utf-8" src="../js/searcher.js"></script>
+<script type="text/javascript" charset="utf-8" src="../js/darkfish.js"></script>
+
+
+<body class="file">
+<nav id="metadata">
+  <nav id="home-section" class="section">
+  <h3 class="section-header">
+    <a href="../index.html">Home</a>
+    <a href="../table_of_contents.html#classes">Classes</a>
+    <a href="../table_of_contents.html#methods">Methods</a>
+  </h3>
+</nav>
+
+
+  <nav id="search-section" class="section project-section" class="initially-hidden">
+  <form action="#" method="get" accept-charset="utf-8">
+    <h3 class="section-header">
+      <input type="text" name="search" placeholder="Search" id="search-field"
+             title="Type to search, Up and Down to navigate, Enter to load">
+    </h3>
+  </form>
+
+  <ul id="search-results" class="initially-hidden"></ul>
+</nav>
+
+
+  <div id="project-metadata">
+    <nav id="fileindex-section" class="section project-section">
+  <h3 class="section-header">Pages</h3>
+
+  <ul>
+  
+    <li class="file"><a href="../rdoc/0_index_rdoc.html">0.index</a>
+  
+    <li class="file"><a href="../rdoc/1_installation_rdoc.html">1.installation</a>
+  
+    <li class="file"><a href="../rdoc/2_running_torquebox_rdoc.html">2.running_torquebox</a>
+  
+    <li class="file"><a href="../rdoc/3_models_and_validation_rdoc.html">3.models_and_validation</a>
+  
+    <li class="file"><a href="../rdoc/4_controller_view_rdoc.html">4.controller_view</a>
+  
+    <li class="file"><a href="../rdoc/5_torquebox_messaging_rdoc.html">5.torquebox_messaging</a>
+  
+  </ul>
+</nav>
+
+    <nav id="classindex-section" class="section project-section">
+  <h3 class="section-header">Class and Module Index</h3>
+
+  <ul class="link-list">
+  
+  </ul>
+</nav>
+
+  </div>
+</nav>
+
+<div id="documentation" class="description">
+  
+<h1 id="label-Controllers+and+Views">Controllers and Views</h1>
+
+<p>Now that we have the models complete.  We can start building the web part
+of our application.  The first thing we’re going to do is add in a
+controller and some views for managing our User.  Rails has a scaffolding
+mechanism that generates a controller and views for standard CRUD
+operations.  As we’ll see in a moment, these operations are associated
+with HTTP verbs and respond to endpoints conventional to RESTful
+applications.</p>
+
+<p>Undeploy your application:</p>
+
+<pre>torquebox undeploy # From your application home directory</pre>
+
+<p>And cd into src/2/face_blog directory, we’ll continue work from here.</p>
+
+<p>we’ll need to temporarily disable the devise namespace as it will
+conflict with our scaffold we’re going to use to create the controllers
+and views.  Open up config/routes.rb and comment out this line.</p>
+
+<pre># devise_for :users</pre>
+
+<p>Now, lets run the scaffold.  Since we’ve already created our migration we
+tell rails to skip it, we also tell rails to skip any files that conflict
+with the generated files, such as our user model.</p>
+
+<pre>rails generate scaffold User email:string name:string dob:date --skip-migration --skip</pre>
+
+<p>You’ll notce that rails create a bunch of files.  For now We’re only
+intersted in the controller, views, and routes.rb.</p>
+
+<p>Next thing we’ll do is add our root route.  This is the route that is
+initiated when a user first navigates to your application.  We’ll set
+this to point to the index action of our users controller.  In
+config/routes.rb add the following:</p>
+
+<pre class="ruby"><span class="ruby-identifier">root</span> :<span class="ruby-identifier">to</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-string">'users#index'</span>
+</pre>
+
+<p>whilst we’re here we can uncomment the devise_for :users, make sure to
+put devise_for :users before resources :users.  The order is important!</p>
+
+<pre>devise_for :users</pre>
+
+<p>Now, we just need to remove the default index.html file</p>
+
+<pre>rm -f public/index.html</pre>
+
+<p>Lets start up the server and see it in action.</p>
+
+<pre>torquebox deploy
+torquebox run</pre>
+
+<p>Once torquebox has started navigate to <a
+href="http://localhost:8080">localhost:8080</a> to see it in action.  We
+don’t have any users yet so it’s not very interesting.  But don’t
+worry we’ll add in some links in a sec.</p>
+
+<p>It’s not particularly exciting right now.  But we’ll jazz it up later.</p>
+
+<p>The first thing we want to do is to add some links for logging in and out. 
+Since we want these on each page we visit, we’ll add them to the
+application layout.  Open up app/views/layouts/applicaton.html.erb and add
+in the following content in the body tag before yield.</p>
+
+<pre>&lt;header&gt;
+  &lt;% if user_signed_in? %&gt;
+     &lt;%= &quot;Hello  #{current_user.name}&quot; %&gt; |
+     &lt;%= link_to('Logout', destroy_user_session_path, :method =&gt; :delete) %&gt;
+  &lt;% else %&gt;
+      &lt;%= link_to('Login', new_user_session_path)  %&gt; |
+      &lt;%= link_to('Register', new_user_registration_path) %&gt;
+  &lt;% end %&gt;
+&lt;/header&gt;</pre>
+
+<p>We are using devise helper methods to get the current_user and to check if
+a user is logged in.  Go back to <a
+href="http://localhost:8080">localhost:8080</a> you should the links
+you’ve just created.  Notice there was no need to build, compile, deploy.
+Not that impressive really since we only updated static files.  But
+you’ll see later this works for business logic too.</p>
+
+<p>Next we’ll update the devise new registration view so that we can
+retrieve the name and dob.  Open up
+app/views/devise/registrations/new.html.erb and add in our extra content
+under the email section.  Notice we use the form helper methods here:</p>
+
+<pre>&lt;div&gt;&lt;%= f.label :name %&gt;&lt;br /&gt;
+&lt;%= f.text_field :name %&gt;&lt;/div&gt;
+
+&lt;div&gt;&lt;%= f.label :dob %&gt;&lt;br /&gt;
+&lt;%= f.date_select :dob, :start_year =&gt; 1900 %&gt;&lt;/div&gt;</pre>
+
+<p>Great.  Now we can login, register and view users.  Next we want to allow
+users to add friends.  To handle friendships we’ll create a new
+controller:</p>
+
+<pre>rails generate controller friendships</pre>
+
+<p>We’ll implement the actions ourselves.  Open up
+app/controllers/friendships_controller.rb and add in our business logic.</p>
+
+<pre class="ruby"><span class="ruby-keyword">class</span> <span class="ruby-constant">FriendshipsController</span> <span class="ruby-operator">&lt;</span> <span class="ruby-constant">ApplicationController</span>
+  <span class="ruby-keyword">def</span> <span class="ruby-identifier">create</span>
+    <span class="ruby-identifier">friend</span> = <span class="ruby-constant">User</span>.<span class="ruby-identifier">find</span>(<span class="ruby-identifier">params</span>[:<span class="ruby-identifier">id</span>])
+
+    <span class="ruby-identifier">current_user</span>.<span class="ruby-identifier">friends</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">friend</span>
+    <span class="ruby-identifier">current_user</span>.<span class="ruby-identifier">save</span>
+    <span class="ruby-identifier">redirect_to</span> <span class="ruby-identifier">root_path</span>
+  <span class="ruby-keyword">end</span>
+
+  <span class="ruby-keyword">def</span> <span class="ruby-identifier">destroy</span>
+    <span class="ruby-identifier">current_user</span>.<span class="ruby-identifier">friends</span>.<span class="ruby-identifier">delete</span>(<span class="ruby-identifier">current_user</span>.<span class="ruby-identifier">friends</span>.<span class="ruby-identifier">find</span>(<span class="ruby-identifier">params</span>[:<span class="ruby-identifier">id</span>]))
+    <span class="ruby-identifier">redirect_to</span> <span class="ruby-identifier">root_path</span>
+  <span class="ruby-keyword">end</span>
+<span class="ruby-keyword">end</span>
+</pre>
+
+<p>create and destory are our actions.  In each action we use the params to
+retrieve the id of the resource we’re working on.  In both cases we’re
+using the params to retreive the ID of the friend, then we’re simply
+adding or removing it from the current users friends.</p>
+
+<p>Wel’ll need to add in some routes that point to our controllers.  Open up
+config/routes.rb and in:</p>
+
+<pre>resources :friendships</pre>
+
+<p>Next let’s update the users list page (app/views/users/list.html.erb) and
+add in links for adding and removing friends.</p>
+
+<p>We’re going to customise this page a little whilst we’re here.  We’ll
+remove the new, edit and destroy links and add in some links to handle
+adding and removing friends.  Notice we use the devise helper methods
+‘current_user’ inline with our html to determine when to show the
+friendship links.  We also use our friendship relation to check which users
+the current_user is friends with and display either add or remove friend.</p>
+
+<pre>&lt;table&gt;
+  &lt;% @users.each do |user| %&gt;
+    &lt;tr&gt;
+      &lt;!-- Here we're adding a few place holders so we can tart it up later --&gt;
+      &lt;td class='avatar'&gt;
+      &lt;/td&gt;
+      &lt;td class='info'&gt;
+        &lt;%= link_to user.name, user %&gt;
+      &lt;/td&gt;
+
+      &lt;td class='links'&gt;
+        &lt;!-- check to see if a current_user exists i.e. is a user logged in --&gt;
+        &lt;% if current_user %&gt;
+          &lt;!-- If the current user is friends with the user we are working with, then display 'remove friend' else 'add friend' --&gt;
+          &lt;% if current_user.friends.include?(user) %&gt;
+            &lt;%= link_to 'Remove Friend', friendship_path(:id =&gt; user), :method =&gt; :delete %&gt;
+          &lt;% else %&gt;
+            &lt;%= link_to 'Add Friend', friendships_path(:id =&gt; user), :method =&gt; :post %&gt;
+          &lt;% end %&gt;
+        &lt;% end %&gt;
+      &lt;/td&gt;
+    &lt;/tr&gt;
+  &lt;% end %&gt;
+&lt;/table&gt;</pre>
+
+<p>Lastly We add a section on our show user page to list their friends and do
+a little tidying up.</p>
+
+<pre>&lt;div id=&quot;info&quot;&gt;
+  &lt;div id=&quot;avatar&quot;&gt;&lt;/div&gt;
+  &lt;div id=&quot;user_info&quot;&gt;
+    &lt;%= @user.name %&gt;&lt;/br&gt;
+    &lt;%= @user.dob %&gt;&lt;/br&gt;
+  &lt;/div&gt;
+  &lt;div id=&quot;contact&quot;&gt;
+    &lt;%= @user.email %&gt;
+  &lt;/div&gt;
+
+  &lt;!-- iterate over @users friends (we set @user in the controller) --&gt;
+  &lt;div id=&quot;friends&quot;&gt;
+    &lt;h3&gt;Friends&lt;/h3&gt;
+    &lt;% @user.friends.each do |user| %&gt;
+      &lt;div id=&quot;friend&quot;&gt;&lt;%= link_to user.name, user_path(user) %&gt;&lt;/div&gt;
+    &lt;% end %&gt;
+  &lt;/div&gt;
+&lt;/div&gt;</pre>
+
+<p>Now login/register and make some friends, then navigate to your user page. 
+You should be able to see a list of your friends.  Fantastic.</p>
+
+<p>Now our website functions as we want it, we can add a bit of style.</p>
+
+<p>copy the ‘application.css’ and images found in the
+src/assets/stylesheets src/assets/images directory into your applications
+app/assets/stylesheets and app/assets/images directories.  Refresh your
+browser and take a moment to awe at your magnificant creation.</p>
+
+<h3 id="label-Overview">Overview</h3>
+
+<p>In this section we looked at controllers and views.  We seen how they are
+linked together through render and through exposing global variables.  We
+took a brief look at some of rails form helper methods and at the link_to
+helper.  We’ve only scratched the surface of what is possible with rails
+at this point.  You can find detailed information on rails helpers,
+controllers, routes and whole lot more here: <a
+href="http://guides.rubyonrails.org/">guides.rubyonrails.org/</a></p>
+
+</div>
+
+
+
+<footer id="validator-badges">
+  <p><a href="http://validator.w3.org/check/referer">[Validate]</a>
+  <p>Generated by <a href="https://github.com/rdoc/rdoc">RDoc</a> 3.12.
+  <p>Generated with the <a href="http://deveiate.org/projects/Darkfish-Rdoc/">Darkfish Rdoc Generator</a> 3.
+</footer>
+
