@@ -1,0 +1,24 @@
+<table>
+  <% @users.each do |user| %>
+    <tr>
+      <!-- Here we're adding a few place holders so we can tart it up later -->
+      <td class='avatar'>
+      </td>
+      <td class='info'>
+        <%= link_to user.name, user %>
+      </td>
+
+      <td class='links'>
+        <!-- check to see if a current_user exists i.e. is a user logged in -->
+        <% if current_user %>
+          <!-- If the current user is friends with the user we are working with, then display 'remove friend' else 'add friend' -->
+          <% if current_user.friends.include?(user) %>
+            <%= link_to 'Remove Friend', friendship_path(:id => user), :method => :delete %>
+          <% else %>
+            <%= link_to 'Add Friend', friendships_path(:id => user), :method => :post %>
+          <% end %>
+        <% end %>
+      </td>
+    </tr>
+  <% end %>
+</table>
